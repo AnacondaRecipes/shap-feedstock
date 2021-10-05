@@ -30,6 +30,7 @@ requirements:
     - scikit-learn
     - pandas
     - tqdm >4.25.0
+    - colorama
     - slicer 0.0.7
     - numba
     - cloudpickle
