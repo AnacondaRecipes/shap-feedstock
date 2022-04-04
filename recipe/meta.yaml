@@ -39,6 +39,7 @@ requirements:
 
 test:
   requires:
+    - matplotlib-base
     - pip
   commands:
     - pip check
