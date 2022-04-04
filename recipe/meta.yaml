@@ -10,9 +10,8 @@ source:
   sha256: 745ff59246c517e13fb29c700c12ee78c1d833078f667676615c11cfdc244c9c
 
 build:
-  number: 1
-  # numba currently isn't available on s390x
-  skip: True  # [s390x]
+  number: 0
+  # trigger 1
   script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-cache-dir -vvv
   missing_dso_whitelist:  # [win]
    - $RPATH/cudart64_101.dll  # [win]
@@ -26,7 +25,6 @@ requirements:
     - numpy
     - pip
     - setuptools
-    - wheel
   run:
     - python
     - numpy
@@ -47,13 +45,6 @@ test:
     - pip check
   imports:
     - shap
-    - shap.explainers
-    - shap.explainers.other
-    - shap.benchmark
-    - shap.maskers
-    - shap.utils
-    - shap.actions
-    - shap.models
 
 about:
   home: https://github.com/slundberg/shap
