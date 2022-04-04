@@ -10,7 +10,7 @@ source:
   sha256: 745ff59246c517e13fb29c700c12ee78c1d833078f667676615c11cfdc244c9c
 
 build:
-  number: 0
+  number: 1
   script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-cache-dir -vvv
   missing_dso_whitelist:  # [win]
    - $RPATH/cudart64_101.dll  # [win]
@@ -21,9 +21,10 @@ requirements:
     - make  # [unix]
   host:
     - python
+    - numpy
     - pip
     - setuptools
-    - numpy
+    - wheel
   run:
     - python
     - numpy
@@ -43,6 +44,16 @@ test:
     - pip check
   imports:
     - shap
+    - shap.explainers
+    - shap.explainers.other
+    - shap.explainers._deep
+    - shap.plots 
+    - shap.plots.colors
+    - shap.benchmark
+    - shap.maskers
+    - shap.utils
+    - shap.actions
+    - shap.models
 
 about:
   home: https://github.com/slundberg/shap
