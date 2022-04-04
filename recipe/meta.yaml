@@ -46,9 +46,6 @@ test:
     - shap
     - shap.explainers
     - shap.explainers.other
-    - shap.explainers._deep
-    - shap.plots 
-    - shap.plots.colors
     - shap.benchmark
     - shap.maskers
     - shap.utils
