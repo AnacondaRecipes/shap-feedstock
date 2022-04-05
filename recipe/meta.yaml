@@ -22,9 +22,9 @@ requirements:
     - make  # [unix]
   host:
     - python
-    - numpy
     - pip
     - setuptools
+    - numpy
   run:
     - python
     - numpy
@@ -39,7 +39,6 @@ requirements:
 
 test:
   requires:
-    - matplotlib-base
     - pip
   commands:
     - pip check
