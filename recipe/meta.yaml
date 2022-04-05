@@ -11,6 +11,7 @@ source:
 
 build:
   number: 0
+  # trigger 1
   script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-cache-dir -vvv
   missing_dso_whitelist:  # [win]
    - $RPATH/cudart64_101.dll  # [win]
