@@ -16,6 +16,7 @@ build:
   script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-cache-dir -vvv
   missing_dso_whitelist:  # [win]
    - $RPATH/cudart64_101.dll  # [win]
+  skip: true # [s390x]
 
 requirements:
   build:
@@ -43,6 +44,8 @@ requirements:
 test:
   requires:
     - pip
+    # Numba needs NumPy 1.21 or less (according to numba itself)
+    - numpy <=1.21
   commands:
     - pip check
   imports:
