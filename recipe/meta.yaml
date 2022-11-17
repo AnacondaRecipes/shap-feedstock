@@ -46,10 +46,21 @@ test:
     - pip
     # Numba needs NumPy 1.21 or less (according to numba itself)
     - numpy <1.22.0a0
+    - matplotlib
   commands:
     - pip check
   imports:
     - shap
+    - shap.explainers
+    - shap.explainers.other
+    - shap.explainers._deep
+    - shap.plots
+    - shap.plots.colors
+    - shap.benchmark
+    - shap.maskers
+    - shap.utils
+    - shap.actions
+    - shap.models
 
 about:
   home: https://github.com/slundberg/shap
