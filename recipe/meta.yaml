@@ -45,7 +45,7 @@ test:
   requires:
     - pip
     # Numba needs NumPy 1.21 or less (according to numba itself)
-    - numpy <=1.21
+    - numpy <1.22.0a0
   commands:
     - pip check
   imports:
