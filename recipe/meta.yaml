@@ -19,10 +19,6 @@ build:
   skip: true # [s390x]
 
 requirements:
-  build:
-    - {{ compiler('c') }}
-    - {{ compiler('cxx') }}
-    - make  # [unix]
   host:
     - python
     - pip
