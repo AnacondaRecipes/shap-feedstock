@@ -1,34 +1,32 @@
-{% set author = "slundberg" %}
 {% set name = "shap" %}
-{% set version = "0.42.1" %}
-{% set sha256 = "3cba8049c36b41c2319270ab62e1d54135b7a6d76705cffbda3c6067aacadb29" %}
+{% set version = "0.46.0" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://github.com/{{ author }}/{{ name }}/archive/v{{ version }}.tar.gz
-  sha256: {{ sha256 }}
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: bdaa5b098be5a958348015e940f6fd264339b5db1e651f9898a3117be95b05a0
 
 build:
   number: 0
-  script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-cache-dir --no-build-isolation -vv
-  missing_dso_whitelist:  # [win]
-   - $RPATH/cudart64_101.dll  # [win]
-  skip: true # [py<37 or s390x]
+  skip: true  # [py<39]
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
 
 requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
+    - make  # [unix]
   host:
     - python
     - pip
-    - setuptools
+    - setuptools >=61.0
+    - setuptools-scm >=8.0
+    - packaging >=20.9
     - wheel
-    - numpy {{ numpy }}
-    - packaging >20.9
+    - numpy >=2.0
   run:
     - python
     - {{ pin_compatible('numpy') }}
@@ -37,23 +35,50 @@ requirements:
     - pandas
     - tqdm >=4.27.0
     - packaging >20.9
-    - slicer 0.0.7
+    - slicer ==0.0.8
     - numba
     - cloudpickle
 
 test:
   requires:
     - pip
-    - matplotlib
+    - pytest
+    # pytest-mpl not available
+    # - pytest-mpl
+    - matplotlib-base
+    - ipython
+    - xgboost
+    - tensorflow  # [linux64 and py<312]
+    # Not available on the platforms
+    - pytorch  # [not win]
+    # transformers tests require pytorch
+    - transformers  # [not win]
+    - catboost
+    # ngboost not available
+    # - ngboost
+    - pyod >=1
+    # Fails tests/explainers/test_tree.py::test_skopt_rf_et
+    # - scikit-optimize
+    # Rebuild for osx-arm64?
+    # - gpboost
+    - lightgbm
+    # Due to old pins on tensorflow, this would downgrade tensorflow massively
+    # - opencv
+    - sentencepiece
+  source_files:
+    - tests
   commands:
     - pip check
+    - pytest -sv tests --ignore=tests/benchmark --ignore=tests/maskers/test_text.py -k "not (test_fixed_composite_masker_call)"
   imports:
     - shap
+    - shap.cext
     - shap.explainers
     - shap.explainers.other
     - shap.explainers._deep
     - shap.plots
     - shap.plots.colors
+    - shap.plots.resources
     - shap.benchmark
     - shap.maskers
     - shap.utils
@@ -68,14 +93,17 @@ about:
   summary: A unified approach to explain the output of any machine learning model.
   description: |
     SHAP (SHapley Additive exPlanations) is a unified approach to explain the output
-    of any machine learning model. SHAP connects game theory with local explanations, 
-    uniting several previous methods and representing the only possible consistent 
-    and locally accurate additive feature attribution method based on expectations.
-  doc_url: https://shap.readthedocs.io/en/latest/
+    of any machine learning model. SHAP connects game theory with local explanations,
+    uniting several previous methods and representing the only possible consistent and
+    locally accurate additive feature attribution method based on expectations.
+  doc_url: https://shap.readthedocs.io
   dev_url: https://github.com/slundberg/shap
 
 extra:
   recipe-maintainers:
+    - connortann
     - mrandrewandrade
+    - primozgodec
     - slundberg
     - xhochy
+  
