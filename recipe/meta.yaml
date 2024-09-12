@@ -30,7 +30,7 @@ requirements:
     - numpy >=2.0
   run:
     - python
-    - {{ pin_compatible('numpy') }}
+    - numpy
     - scipy
     - scikit-learn
     - pandas
