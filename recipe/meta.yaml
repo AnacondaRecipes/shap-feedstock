@@ -74,6 +74,9 @@ test:
     - tests
   commands:
     - pip check
+    # OMP: Error #13: Assertion failure at kmp_dispatch.cpp(1298).
+    # https://github.com/llvm/llvm-project/issues/54422
+    - export OMP_NUM_THREADS=1  # [osx]
     - pytest -sv tests --ignore=tests/benchmark
   imports:
     - shap
