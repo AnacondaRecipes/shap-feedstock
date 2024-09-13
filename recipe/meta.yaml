@@ -27,10 +27,10 @@ requirements:
     - setuptools-scm >=8.0
     - packaging >=20.9
     - wheel
-    - numpy >=2.0
+    - numpy {{ numpy }}
   run:
     - python
-    - numpy
+    - {{ pin_compatible('numpy') }}
     - scipy
     - scikit-learn
     - pandas
