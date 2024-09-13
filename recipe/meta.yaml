@@ -75,7 +75,7 @@ test:
     - tests
   commands:
     - pip check
-    - pytest -sv tests --ignore=tests/benchmark --ignore=tests/maskers/test_text.py -k "not (test_fixed_composite_masker_call)"
+    - pytest -sv tests --ignore=tests/benchmark
   imports:
     - shap
     - shap.cext
