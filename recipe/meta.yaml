@@ -39,6 +39,10 @@ requirements:
     - slicer ==0.0.8
     - numba
     - cloudpickle
+  run_constrained:
+    # scaled_dot_product_attention attribute is only available
+    # with a newer version of pytorch (>=2.0).
+    - pytorch >=2.0
 
 test:
   requires:
