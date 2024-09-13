@@ -53,7 +53,8 @@ test:
     - matplotlib-base
     - ipython
     - xgboost
-    - tensorflow  # [linux64 and py<312]
+    # tensorflow makes pip check to fail
+    # - tensorflow  # [(osx or linux64) and py<312]
     # Not available on the platforms
     - pytorch  # [not win]
     # transformers tests require pytorch
