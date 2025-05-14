@@ -13,8 +13,6 @@ build:
   number: 0
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   skip: True  # [py<39]
-  ignore_run_exports:
-    - numpy
 
 requirements:
   build:
@@ -31,7 +29,7 @@ requirements:
     - packaging >=20.9
   run:
     - python
-    - {{ pin_compatible('numpy') }}
+    - numpy <3
     - scipy
     - scikit-learn
     - pandas
