@@ -13,6 +13,8 @@ build:
   number: 0
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   skip: True  # [py<39]
+  ignore_run_exports:
+    - numpy
 
 requirements:
   build:
@@ -29,6 +31,7 @@ requirements:
     - packaging >=20.9
   run:
     - python
+    - {{ pin_compatible('numpy') }}
     - scipy
     - scikit-learn
     - pandas
@@ -65,7 +68,7 @@ test:
     # OMP: Error #13: Assertion failure at kmp_dispatch.cpp(1298).
     # https://github.com/llvm/llvm-project/issues/54422
     - export OMP_NUM_THREADS=1  # [osx]
-    - pytest -sv tests --ignore=tests/benchmark
+    - pytest -sv tests --ignore=tests/benchmark  # [not py>=313]
   requires:
     - pip
     - pytest
@@ -74,7 +77,8 @@ test:
     - xgboost
     - pytorch  # [not win]
     - transformers  # [not win]
-    - catboost
+    # catboost py313 support started from version 1.2.8. Won`t fix.
+    - catboost  # [not py>=313]
     - pyod >=1
     - lightgbm
     - sentencepiece
