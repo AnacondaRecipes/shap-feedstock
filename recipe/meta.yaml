@@ -1,5 +1,5 @@
 {% set name = "shap" %}
-{% set version = "0.46.0" %}
+{% set version = "0.47.2" %}
 
 package:
   name: {{ name|lower }}
@@ -7,13 +7,12 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: bdaa5b098be5a958348015e940f6fd264339b5db1e651f9898a3117be95b05a0
+  sha256: 8a53901fc44396d92a12b985d83ca4a47a7dcc4a04a7f7e556232a35f17d30c8
 
 build:
   number: 0
-  # s390x: numba not available
-  skip: true  # [py<39 or s390x]
-  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  skip: True  # [py<39]
 
 requirements:
   build:
@@ -22,62 +21,31 @@ requirements:
   host:
     - python
     - pip
+    - wheel
     - setuptools >=61.0
     - setuptools-scm >=8.0
-    - packaging >=20.9
-    - wheel
     - numpy {{ numpy }}
+    - cython >=3.0.11
+    - packaging >=20.9
   run:
     - python
-    - {{ pin_compatible('numpy') }}
     - scipy
     - scikit-learn
     - pandas
     - tqdm >=4.27.0
     - packaging >20.9
-    - slicer ==0.0.8
-    - numba
+    - slicer 0.0.8
+    - numba >=0.54
     - cloudpickle
+    - typing-extensions
   run_constrained:
     # scaled_dot_product_attention attribute is only available
     # with a newer version of pytorch (>=2.0).
     - pytorch >=2.0
 
 test:
-  requires:
-    - pip
-    - pytest
-    # pytest-mpl not available
-    # - pytest-mpl
-    - matplotlib-base
-    - ipython
-    - xgboost
-    # tensorflow makes pip check to fail
-    # - tensorflow  # [(osx or linux64) and py<312]
-    # Not available on the platforms
-    - pytorch  # [not win]
-    # transformers tests require pytorch
-    - transformers  # [not win]
-    - catboost
-    # ngboost not available
-    # - ngboost
-    - pyod >=1
-    # Fails tests/explainers/test_tree.py::test_skopt_rf_et
-    # - scikit-optimize
-    # Rebuild for osx-arm64?
-    # - gpboost
-    - lightgbm
-    # Due to old pins on tensorflow, this would downgrade tensorflow massively
-    # - opencv
-    - sentencepiece
   source_files:
     - tests
-  commands:
-    - pip check
-    # OMP: Error #13: Assertion failure at kmp_dispatch.cpp(1298).
-    # https://github.com/llvm/llvm-project/issues/54422
-    - export OMP_NUM_THREADS=1  # [osx]
-    - pytest -sv tests --ignore=tests/benchmark
   imports:
     - shap
     - shap.cext
@@ -92,6 +60,24 @@ test:
     - shap.utils
     - shap.actions
     - shap.models
+  commands:
+    - pip check
+    # OMP: Error #13: Assertion failure at kmp_dispatch.cpp(1298).
+    # https://github.com/llvm/llvm-project/issues/54422
+    - export OMP_NUM_THREADS=1  # [osx]
+    - pytest -sv tests --ignore=tests/benchmark
+  requires:
+    - pip
+    - pytest
+    - matplotlib-base
+    - ipython
+    - xgboost
+    - pytorch  # [not win]
+    - transformers  # [not win]
+    - catboost
+    - pyod >=1
+    - lightgbm
+    - sentencepiece
 
 about:
   home: https://github.com/slundberg/shap
