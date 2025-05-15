@@ -80,8 +80,8 @@ test:
     - matplotlib-base
     - ipython
     - xgboost
-    - pytorch  # [not win]
-    - transformers  # [not win]
+    - pytorch
+    - transformers
     # catboost py313 support started from version 1.2.8. Won`t fix.
     - catboost  # [not py>=313]
     - pyod >=1
@@ -89,7 +89,7 @@ test:
     - sentencepiece
 
 about:
-  home: https://github.com/slundberg/shap
+  home: https://github.com/shap/shap
   license: MIT
   license_family: MIT
   license_file: LICENSE
