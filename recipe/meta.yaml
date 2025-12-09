@@ -1,13 +1,13 @@
 {% set name = "shap" %}
-{% set version = "0.47.2" %}
+{% set version = "0.48.0" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 8a53901fc44396d92a12b985d83ca4a47a7dcc4a04a7f7e556232a35f17d30c8
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: f169dc73fe144e70a0331b5507f9fd290d7695a3c7935fa8e4862e376321baf9
 
 build:
   number: 0
@@ -16,6 +16,7 @@ build:
 
 requirements:
   build:
+    - {{ stdlib('c') }}
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
   host:
@@ -25,8 +26,8 @@ requirements:
     - setuptools >=61.0
     - setuptools-scm >=8.0
     - numpy {{ numpy }}
-    - cython >=3.0.11
     - packaging >=20.9
+    - cython >=3.0.11
   run:
     - python
     - numpy <3
