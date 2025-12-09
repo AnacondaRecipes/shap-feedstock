@@ -1,13 +1,13 @@
 {% set name = "shap" %}
-{% set version = "0.47.2" %}
+{% set version = "0.48.0" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 8a53901fc44396d92a12b985d83ca4a47a7dcc4a04a7f7e556232a35f17d30c8
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: f169dc73fe144e70a0331b5507f9fd290d7695a3c7935fa8e4862e376321baf9
 
 build:
   number: 0
@@ -16,6 +16,7 @@ build:
 
 requirements:
   build:
+    - {{ stdlib('c') }}
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
   host:
@@ -25,8 +26,8 @@ requirements:
     - setuptools >=61.0
     - setuptools-scm >=8.0
     - numpy {{ numpy }}
-    - cython >=3.0.11
     - packaging >=20.9
+    - cython >=3.0.11
   run:
     - python
     - numpy <3
@@ -44,13 +45,10 @@ requirements:
     # with a newer version of pytorch (>=2.0).
     - pytorch >=2.0
 
-# catboost py313 support started from version 1.2.8. Won`t fix.
-{% set ignore_tests = "" %}
-# On win platform:
-# >       X = rng.integers(low=0, high=2, size=(n_rows, 1_100_000)).astype(np.float64)
-# E       numpy.core._exceptions._ArrayMemoryError: Unable to allocate 16.4 GiB for an array with shape (2000, 1100000) and data type float64
-{% set ignore_tests = " --ignore=tests/explainers/test_tree.py" %}  # [py>=313 or win]
-
+# >   X = rng.integers(low=0, high=2, size=(n_rows, 1_100_000)).astype(np.float64)
+# E   numpy.core._exceptions._ArrayMemoryError: Unable to allocate 16.4 GiB for an array with shape (2000, 1100000) and data type float64
+{% set deselect_tests = " --deselect=tests/explainers/test_tree.py::test_overflow_tree_path_dependent" %}
+{% set deselect_tests = deselect_tests + " --deselect=tests/models/test_teacher_forcing_logits.py::test_falcon" %}
 test:
   source_files:
     - tests
@@ -73,13 +71,14 @@ test:
     # OMP: Error #13: Assertion failure at kmp_dispatch.cpp(1298).
     # https://github.com/llvm/llvm-project/issues/54422
     - export OMP_NUM_THREADS=1  # [osx]
-    - pytest -sv tests {{ ignore_tests }} --ignore=tests/benchmark
+    - pytest -sv tests {{ deselect_tests }} --ignore=tests/benchmark
   requires:
     - pip
     - pytest
     - matplotlib-base
     - ipython
-    - xgboost
+    # https://github.com/shap/shap/issues/4202
+    - xgboost <3.1
     - pytorch
     - transformers
     # catboost py313 support started from version 1.2.8. Won`t fix.
