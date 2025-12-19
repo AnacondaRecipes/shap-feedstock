@@ -70,14 +70,16 @@ test:
     # OMP: Error #13: Assertion failure at kmp_dispatch.cpp(1298).
     # https://github.com/llvm/llvm-project/issues/54422
     - export OMP_NUM_THREADS=1  # [osx]
-    - pytest -sv tests {{ ignore_tests }} --ignore=tests/benchmark
+    - pytest -sv tests {{ deselect_tests }} --ignore=tests/benchmark
   requires:
     - pip
     - pytest
     - matplotlib-base
     - ipython
-    - xgboost
+    # https://github.com/shap/shap/issues/4202
+    - xgboost <3.1
     - pytorch-cpu
+
     - transformers
     # catboost py313 support started from version 1.2.8. Won`t fix.
     - catboost  # [not py>=313]
