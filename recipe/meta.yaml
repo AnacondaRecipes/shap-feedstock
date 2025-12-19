@@ -1,21 +1,22 @@
 {% set name = "shap" %}
-{% set version = "0.47.2" %}
+{% set version = "0.50.0" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 8a53901fc44396d92a12b985d83ca4a47a7dcc4a04a7f7e556232a35f17d30c8
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: bdc559acf7f647bc3bb22c6a1fea9f50716ed357ad595bc357b43082ae4dc6b9
 
 build:
   number: 0
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
-  skip: True  # [py<39]
+  skip: true  # [py<311]
 
 requirements:
   build:
+    - {{ stdlib('c') }}
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
   host:
@@ -25,24 +26,21 @@ requirements:
     - setuptools >=61.0
     - setuptools-scm >=8.0
     - numpy {{ numpy }}
-    - cython >=3.0.11
     - packaging >=20.9
+    - cython >=3.0.11
   run:
     - python
-    - numpy <3
+    - numpy >=2
     - scipy
     - scikit-learn
     - pandas
     - tqdm >=4.27.0
     - packaging >20.9
-    - slicer 0.0.8
-    - numba >=0.54
+    - slicer ==0.0.8
+    - numba ==0.63.0  # [py>=314]
+    - numba >=0.54  # [py<314]
     - cloudpickle
     - typing-extensions
-  run_constrained:
-    # scaled_dot_product_attention attribute is only available
-    # with a newer version of pytorch (>=2.0).
-    - pytorch >=2.0
 
 # catboost py313 support started from version 1.2.8. Won`t fix.
 {% set ignore_tests = "" %}
@@ -50,7 +48,6 @@ requirements:
 # >       X = rng.integers(low=0, high=2, size=(n_rows, 1_100_000)).astype(np.float64)
 # E       numpy.core._exceptions._ArrayMemoryError: Unable to allocate 16.4 GiB for an array with shape (2000, 1100000) and data type float64
 {% set ignore_tests = " --ignore=tests/explainers/test_tree.py" %}  # [py>=313 or win]
-
 test:
   source_files:
     - tests
@@ -80,11 +77,11 @@ test:
     - matplotlib-base
     - ipython
     - xgboost
-    - pytorch
+    - pytorch-cpu
     - transformers
     # catboost py313 support started from version 1.2.8. Won`t fix.
     - catboost  # [not py>=313]
-    - pyod >=1
+    - pyod
     - lightgbm
     - sentencepiece
 
