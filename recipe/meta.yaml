@@ -47,7 +47,7 @@ requirements:
 # On win platform:
 # >       X = rng.integers(low=0, high=2, size=(n_rows, 1_100_000)).astype(np.float64)
 # E       numpy.core._exceptions._ArrayMemoryError: Unable to allocate 16.4 GiB for an array with shape (2000, 1100000) and data type float64
-{% set ignore_tests = " --ignore=tests/explainers/test_tree.py" %}  # [py>=313 or win]
+{% set ignore_tests = " --ignore=tests/explainers/test_tree.py" %}
 test:
   source_files:
     - tests
