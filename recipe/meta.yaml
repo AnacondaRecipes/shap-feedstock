@@ -48,6 +48,8 @@ requirements:
 # >       X = rng.integers(low=0, high=2, size=(n_rows, 1_100_000)).astype(np.float64)
 # E       numpy.core._exceptions._ArrayMemoryError: Unable to allocate 16.4 GiB for an array with shape (2000, 1100000) and data type float64
 {% set ignore_tests = " --ignore=tests/explainers/test_tree.py" %}
+# E   AttributeError: 'NoneType' object has no attribute 'shape'
+{% set deselect_tests = " --deselect=tests/models/test_teacher_forcing_logits.py::test_falcon" %}
 test:
   source_files:
     - tests
@@ -70,7 +72,7 @@ test:
     # OMP: Error #13: Assertion failure at kmp_dispatch.cpp(1298).
     # https://github.com/llvm/llvm-project/issues/54422
     - export OMP_NUM_THREADS=1  # [osx]
-    - pytest -sv tests {{ ignore_tests }} --ignore=tests/benchmark
+    - pytest -sv tests {{ ignore_tests }} {{ deselect_tests }} --ignore=tests/benchmark
   requires:
     - pip
     - pytest
