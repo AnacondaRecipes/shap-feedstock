@@ -1,5 +1,5 @@
 {% set name = "shap" %}
-{% set version = "0.48.0" %}
+{% set version = "0.50.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,12 +7,12 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: f169dc73fe144e70a0331b5507f9fd290d7695a3c7935fa8e4862e376321baf9
+  sha256: bdc559acf7f647bc3bb22c6a1fea9f50716ed357ad595bc357b43082ae4dc6b9
 
 build:
   number: 0
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
-  skip: True  # [py<39]
+  skip: true  # [py<311]
 
 requirements:
   build:
@@ -30,25 +30,26 @@ requirements:
     - cython >=3.0.11
   run:
     - python
-    - numpy <3
+    - numpy >=2
     - scipy
     - scikit-learn
     - pandas
     - tqdm >=4.27.0
     - packaging >20.9
-    - slicer 0.0.8
-    - numba >=0.54
+    - slicer ==0.0.8
+    - numba ==0.63.0  # [py>=314]
+    - numba >=0.54  # [py<314]
     - cloudpickle
     - typing-extensions
-  run_constrained:
-    # scaled_dot_product_attention attribute is only available
-    # with a newer version of pytorch (>=2.0).
-    - pytorch >=2.0
 
-# >   X = rng.integers(low=0, high=2, size=(n_rows, 1_100_000)).astype(np.float64)
-# E   numpy.core._exceptions._ArrayMemoryError: Unable to allocate 16.4 GiB for an array with shape (2000, 1100000) and data type float64
-{% set deselect_tests = " --deselect=tests/explainers/test_tree.py::test_overflow_tree_path_dependent" %}
-{% set deselect_tests = deselect_tests + " --deselect=tests/models/test_teacher_forcing_logits.py::test_falcon" %}
+# catboost py313 support started from version 1.2.8. Won`t fix.
+{% set ignore_tests = "" %}
+# On win platform:
+# >       X = rng.integers(low=0, high=2, size=(n_rows, 1_100_000)).astype(np.float64)
+# E       numpy.core._exceptions._ArrayMemoryError: Unable to allocate 16.4 GiB for an array with shape (2000, 1100000) and data type float64
+{% set ignore_tests = " --ignore=tests/explainers/test_tree.py" %}
+# E   AttributeError: 'NoneType' object has no attribute 'shape'
+{% set deselect_tests = " --deselect=tests/models/test_teacher_forcing_logits.py::test_falcon" %}
 test:
   source_files:
     - tests
@@ -71,19 +72,18 @@ test:
     # OMP: Error #13: Assertion failure at kmp_dispatch.cpp(1298).
     # https://github.com/llvm/llvm-project/issues/54422
     - export OMP_NUM_THREADS=1  # [osx]
-    - pytest -sv tests {{ deselect_tests }} --ignore=tests/benchmark
+    - pytest -sv tests {{ ignore_tests }} {{ deselect_tests }} --ignore=tests/benchmark
   requires:
     - pip
     - pytest
     - matplotlib-base
     - ipython
-    # https://github.com/shap/shap/issues/4202
     - xgboost <3.1
-    - pytorch
+    - pytorch-cpu
     - transformers
     # catboost py313 support started from version 1.2.8. Won`t fix.
     - catboost  # [not py>=313]
-    - pyod >=1
+    - pyod
     - lightgbm
     - sentencepiece
 
