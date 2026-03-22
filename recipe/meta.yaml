@@ -30,7 +30,7 @@ requirements:
     - cython >=3.0.11
   run:
     - python
-    - numpy >=2
+    - numpy >=2,<2.4
     - scipy
     - scikit-learn
     - pandas
@@ -42,14 +42,16 @@ requirements:
     - cloudpickle
     - typing-extensions
 
-# catboost py313 support started from version 1.2.8. Won`t fix.
-{% set ignore_tests = "" %}
-# On win platform:
-# >       X = rng.integers(low=0, high=2, size=(n_rows, 1_100_000)).astype(np.float64)
-# E       numpy.core._exceptions._ArrayMemoryError: Unable to allocate 16.4 GiB for an array with shape (2000, 1100000) and data type float64
-{% set ignore_tests = " --ignore=tests/explainers/test_tree.py" %}
-# E   AttributeError: 'NoneType' object has no attribute 'shape'
-{% set deselect_tests = " --deselect=tests/models/test_teacher_forcing_logits.py::test_falcon" %}
+{% set deselect_tests = "" %}
+# E numpy._core._exceptions._ArrayMemoryError: Unable to allocate 16.4 GiB for an array with shape (2000, 1100000) and data type float64
+{% set deselect_tests = " --deselect=tests/explainers/test_tree.py::test_overflow_tree_path_dependent" %}
+# E TypeError: only 0-dimensional arrays can be converted to Python scalars
+# Checked that those tests are failing only when numpy>=2.4, works fine with numpy<2.4
+# {% set deselect_tests = deselect_tests + " --deselect=tests/explainers/test_coalition.py::test_tabular_coalition_single_output" %}
+# {% set deselect_tests = deselect_tests + " --deselect=tests/explainers/test_coalition.py::test_tabular_coalition_exact_match" %}
+# {% set deselect_tests = deselect_tests + " --deselect=tests/explainers/test_coalition.py::test_tabular_coalition_partition_match" %}
+
+
 test:
   source_files:
     - tests
@@ -77,7 +79,7 @@ test:
     # OMP: Error #13: Assertion failure at kmp_dispatch.cpp(1298).
     # https://github.com/llvm/llvm-project/issues/54422
     - export OMP_NUM_THREADS=1  # [osx]
-    - pytest -sv tests --ignore=tests/benchmark
+    - pytest -sv tests {{ deselect_tests }} --ignore=tests/benchmark
   requires:
     - pip
     - pytest
@@ -86,7 +88,6 @@ test:
     - xgboost <3.1
     - pytorch-cpu
     - transformers
-    # catboost py313 support started from version 1.2.8. Won`t fix.
     - catboost
     - pyod
     - lightgbm
