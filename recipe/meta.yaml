@@ -87,10 +87,11 @@ test:
     - matplotlib-base
     - ipython
     - xgboost
-    # PyTorch is not available for PY3.14
+    # pytorch is not available for PY3.14
     - pytorch-cpu  # [py<314]
     - transformers
-    - catboost
+    # catboost is not available for PY3.14
+    - catboost  # [py<314]
     - pyod
     - lightgbm
     - sentencepiece
