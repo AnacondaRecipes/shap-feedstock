@@ -42,7 +42,6 @@ requirements:
     - cloudpickle
     - typing-extensions
 
-{% set deselect_tests = "" %}
 # E numpy._core._exceptions._ArrayMemoryError: Unable to allocate 16.4 GiB for an array with shape (2000, 1100000) and data type float64
 {% set deselect_tests = " --deselect=tests/explainers/test_tree.py::test_overflow_tree_path_dependent" %}
 # E TypeError: only 0-dimensional arrays can be converted to Python scalars
@@ -52,6 +51,8 @@ requirements:
 {% set deselect_tests = deselect_tests + " --deselect=tests/explainers/test_coalition.py::test_tabular_coalition_partition_match" %}
 # Flaky on CI: urllib.error.HTTPError: HTTP Error 502: Bad Gateway or Proxy Error
 {% set deselect_tests = deselect_tests + " --deselect=tests/test_datasets.py::test_nhanesi" %}
+# "Model name '{}' was not found in tokenizers model name list ({}). "
+{% set deselect_tests = deselect_tests + " --deselect=tests/maskers/test_fixed_composite.py::test_serialization_fixedcomposite_masker" %}  # [py==314]
 
 test:
   source_files:
