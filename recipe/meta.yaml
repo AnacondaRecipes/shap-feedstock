@@ -1,5 +1,5 @@
 {% set name = "shap" %}
-{% set version = "0.50.0" %}
+{% set version = "0.51.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: bdc559acf7f647bc3bb22c6a1fea9f50716ed357ad595bc357b43082ae4dc6b9
+  sha256: cfa17ff213657c9d50285aa923d79b0037a62e2ee1a31bc3eec7e196b00bdb59
 
 build:
   number: 0
@@ -37,8 +37,8 @@ requirements:
     - tqdm >=4.27.0
     - packaging >20.9
     - slicer ==0.0.8
-    - numba ==0.63.0  # [py>=314]
-    - numba >=0.54  # [py<314]
+    - numba  # [not (osx or x86_64)]
+    - llvmlite  # [not (osx or x86_64)]
     - cloudpickle
     - typing-extensions
 
@@ -55,24 +55,29 @@ test:
     - tests
   imports:
     - shap
-    - shap.cext
-    - shap.explainers
-    - shap.explainers.other
-    - shap.explainers._deep
-    - shap.plots
-    - shap.plots.colors
-    - shap.plots.resources
+    - shap._explanation
     - shap.benchmark
+    - shap.explainers._coalition
+    - shap.explainers._explainer
+    - shap.explainers._tree
+    - shap.explainers.other
+    - shap.links
     - shap.maskers
-    - shap.utils
-    - shap.actions
     - shap.models
+    - shap.plots
+    - shap.plots._force
+    - shap.plots._style
+    - shap.plots._utils
+    - shap.plots.colors
+    - shap.utils
+    - shap.utils._exceptions
+    - shap.utils._masked_model
   commands:
     - pip check
     # OMP: Error #13: Assertion failure at kmp_dispatch.cpp(1298).
     # https://github.com/llvm/llvm-project/issues/54422
     - export OMP_NUM_THREADS=1  # [osx]
-    - pytest -sv tests {{ ignore_tests }} {{ deselect_tests }} --ignore=tests/benchmark
+    - pytest -sv tests --ignore=tests/benchmark
   requires:
     - pip
     - pytest
@@ -82,7 +87,7 @@ test:
     - pytorch-cpu
     - transformers
     # catboost py313 support started from version 1.2.8. Won`t fix.
-    - catboost  # [not py>=313]
+    - catboost
     - pyod
     - lightgbm
     - sentencepiece
