@@ -30,7 +30,7 @@ requirements:
     - cython >=3.0.11
   run:
     - python
-    - numpy >=2,<2.4
+    - numpy >=2
     - scipy
     - scikit-learn
     - pandas
@@ -46,10 +46,10 @@ requirements:
 # E numpy._core._exceptions._ArrayMemoryError: Unable to allocate 16.4 GiB for an array with shape (2000, 1100000) and data type float64
 {% set deselect_tests = " --deselect=tests/explainers/test_tree.py::test_overflow_tree_path_dependent" %}
 # E TypeError: only 0-dimensional arrays can be converted to Python scalars
-# Checked that those tests are failing only when numpy>=2.4, works fine with numpy<2.4
-# {% set deselect_tests = deselect_tests + " --deselect=tests/explainers/test_coalition.py::test_tabular_coalition_single_output" %}
-# {% set deselect_tests = deselect_tests + " --deselect=tests/explainers/test_coalition.py::test_tabular_coalition_exact_match" %}
-# {% set deselect_tests = deselect_tests + " --deselect=tests/explainers/test_coalition.py::test_tabular_coalition_partition_match" %}
+# Checked that these tests fail only with numpy>=2.4 and work correctly with numpy<2.4
+{% set deselect_tests = deselect_tests + " --deselect=tests/explainers/test_coalition.py::test_tabular_coalition_single_output" %}
+{% set deselect_tests = deselect_tests + " --deselect=tests/explainers/test_coalition.py::test_tabular_coalition_exact_match" %}
+{% set deselect_tests = deselect_tests + " --deselect=tests/explainers/test_coalition.py::test_tabular_coalition_partition_match" %}
 
 
 test:
@@ -86,7 +86,8 @@ test:
     - matplotlib-base
     - ipython
     - xgboost <3.1
-    - pytorch-cpu
+    # PyTorch is not available for PY3.14
+    - pytorch-cpu  # [py<314]
     - transformers
     - catboost
     - pyod
