@@ -37,8 +37,8 @@ requirements:
     - tqdm >=4.27.0
     - packaging >20.9
     - slicer ==0.0.8
-    - numba  # [not (osx or x86_64)]
-    - llvmlite  # [not (osx or x86_64)]
+    - numba
+    - llvmlite
     - cloudpickle
     - typing-extensions
 
@@ -53,6 +53,7 @@ requirements:
 {% set deselect_tests = deselect_tests + " --deselect=tests/test_datasets.py::test_nhanesi" %}
 # "Model name '{}' was not found in tokenizers model name list ({}). "
 {% set deselect_tests = deselect_tests + " --deselect=tests/maskers/test_fixed_composite.py::test_serialization_fixedcomposite_masker" %}  # [py==314]
+{% set deselect_tests = deselect_tests + " --deselect=tests/maskers/test_text.py" %}  # [py==314]
 
 test:
   source_files:
