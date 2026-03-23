@@ -91,7 +91,7 @@ test:
     - xgboost
     # pytorch is not available for PY3.14
     - pytorch-cpu  # [py<314]
-    - transformers
+    - transformers <4.54.0
     # catboost is not available for PY3.14
     - catboost  # [py<314]
     - pyod
