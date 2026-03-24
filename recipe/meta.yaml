@@ -87,7 +87,8 @@ test:
     - ipython
     - xgboost
     - pytorch
-    - transformers <4.54.0
+    - transformers <4.54.0  # [py<314]
+    - transformers # [py==314]
     # catboost is not available for PY3.14
     - catboost  # [py<314]
     - pyod
