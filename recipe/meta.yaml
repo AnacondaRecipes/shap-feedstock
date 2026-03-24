@@ -37,8 +37,8 @@ requirements:
     - tqdm >=4.27.0
     - packaging >20.9
     - slicer ==0.0.8
-    - numba
-    - llvmlite
+    - numba  # [linux-aarch64]
+    - llvmlite  # [linux-aarch64]
     - cloudpickle
     - typing-extensions
 
