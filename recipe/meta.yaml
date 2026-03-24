@@ -37,8 +37,8 @@ requirements:
     - tqdm >=4.27.0
     - packaging >20.9
     - slicer ==0.0.8
-    - numba  # [linux-aarch64]
-    - llvmlite  # [linux-aarch64]
+    - numba  # [linux and aarch64]
+    - llvmlite  # [linux and aarch64]
     - cloudpickle
     - typing-extensions
 
@@ -51,9 +51,6 @@ requirements:
 {% set deselect_tests = deselect_tests + " --deselect=tests/explainers/test_coalition.py::test_tabular_coalition_partition_match" %}
 # Flaky on CI: urllib.error.HTTPError: HTTP Error 502: Bad Gateway or Proxy Error
 {% set deselect_tests = deselect_tests + " --deselect=tests/test_datasets.py::test_nhanesi" %}
-# "Model name '{}' was not found in tokenizers model name list ({}). "
-{% set deselect_tests = deselect_tests + " --deselect=tests/maskers/test_fixed_composite.py::test_serialization_fixedcomposite_masker" %}  # [py==314]
-{% set deselect_tests = deselect_tests + " --deselect=tests/maskers/test_text.py" %}  # [py==314]
 
 test:
   source_files:
@@ -89,8 +86,7 @@ test:
     - matplotlib-base
     - ipython
     - xgboost
-    # pytorch is not available for PY3.14
-    - pytorch-cpu  # [py<314]
+    - pytorch
     - transformers <4.54.0
     # catboost is not available for PY3.14
     - catboost  # [py<314]
