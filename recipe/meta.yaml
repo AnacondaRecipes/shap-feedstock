@@ -52,6 +52,18 @@ requirements:
 # Flaky on CI: urllib.error.HTTPError: HTTP Error 502: Bad Gateway or Proxy Error
 {% set deselect_tests = deselect_tests + " --deselect=tests/test_datasets.py::test_nhanesi" %}
 
+{% set ignore_tests = "" %}
+# Skip 3.14 test for now due to massive failing scope because of
+# missing correct version of transformers for py3.14 and missing catboost for py3.14
+# Check during next version bump.
+{% set ignore_tests = ignore_tests + " --ignore=tests/explainers/test_deep.py" %}  # [py==314]
+{% set ignore_tests = ignore_tests + " --ignore=tests/explainers/test_explainer.py" %}  # [py==314]
+{% set ignore_tests = ignore_tests + " --ignore=tests/explainers/test_partition.py" %}  # [py==314]
+{% set ignore_tests = ignore_tests + " --ignore=tests/maskers/test_fixed_composite.py" %}  # [py==314]
+{% set ignore_tests = ignore_tests + " --ignore=tests/maskers/test_text.py" %}  # [py==314]
+{% set ignore_tests = ignore_tests + " --ignore=tests/models/test_teacher_forcing_logits.py" %}  # [py==314]
+{% set ignore_tests = ignore_tests + " --ignore=tests/models/test_text_generation.py" %}  # [py==314]
+
 test:
   source_files:
     - tests
@@ -79,7 +91,7 @@ test:
     # OMP: Error #13: Assertion failure at kmp_dispatch.cpp(1298).
     # https://github.com/llvm/llvm-project/issues/54422
     - export OMP_NUM_THREADS=1  # [osx]
-    - pytest -sv tests {{ deselect_tests }} --ignore=tests/benchmark
+    - pytest -sv tests {{ deselect_tests }} {{ ignore_tests }} --ignore=tests/benchmark
   requires:
     - pip
     - pytest
@@ -87,8 +99,7 @@ test:
     - ipython
     - xgboost
     - pytorch
-    - transformers <4.54.0  # [py<314]
-    - transformers # [py==314]
+    - transformers <4.54.0
     # catboost is not available for PY3.14
     - catboost  # [py<314]
     - pyod
