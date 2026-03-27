@@ -37,7 +37,7 @@ requirements:
     - tqdm >=4.27.0
     - packaging >20.9
     - slicer ==0.0.8
-    # Enable numba for all platforms based on usage in upstream:
+    # Pin numba for all platforms based on usage in upstream:
     # https://github.com/shap/shap/blob/v0.51.0/shap/utils/_clustering.py#L13
     - numba
     - llvmlite  # [linux and aarch64]
