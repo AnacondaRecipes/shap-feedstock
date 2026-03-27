@@ -10,7 +10,7 @@ source:
   sha256: cfa17ff213657c9d50285aa923d79b0037a62e2ee1a31bc3eec7e196b00bdb59
 
 build:
-  number: 0
+  number: 1
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   skip: true  # [py<311]
 
@@ -37,8 +37,11 @@ requirements:
     - tqdm >=4.27.0
     - packaging >20.9
     - slicer ==0.0.8
-    - numba  # [linux and aarch64]
-    - llvmlite  # [linux and aarch64]
+    # Pin numba for all platforms based on usage in upstream:
+    # https://github.com/shap/shap/blob/v0.51.0/shap/utils/_clustering.py#L13
+    - numba
+    # llvmlite is dropped since CF only pin llvmlite for MacOS intel which is not supported anymore
+    # https://github.com/conda-forge/shap-feedstock/blob/main/recipe/recipe.yaml#L64-L66
     - cloudpickle
     - typing-extensions
 
