@@ -10,7 +10,7 @@ source:
   sha256: cfa17ff213657c9d50285aa923d79b0037a62e2ee1a31bc3eec7e196b00bdb59
 
 build:
-  number: 0
+  number: 1
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   skip: true  # [py<311]
 
@@ -37,7 +37,9 @@ requirements:
     - tqdm >=4.27.0
     - packaging >20.9
     - slicer ==0.0.8
-    - numba  # [linux and aarch64]
+    # Enable numba for all platforms based on usage in upstream:
+    # https://github.com/shap/shap/blob/v0.51.0/shap/utils/_clustering.py#L13
+    - numba
     - llvmlite  # [linux and aarch64]
     - cloudpickle
     - typing-extensions
