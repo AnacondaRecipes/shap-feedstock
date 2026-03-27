@@ -40,7 +40,7 @@ requirements:
     # Pin numba for all platforms based on usage in upstream:
     # https://github.com/shap/shap/blob/v0.51.0/shap/utils/_clustering.py#L13
     - numba
-    - llvmlite  # [linux and aarch64]
+    - llvmlite
     - cloudpickle
     - typing-extensions
 
