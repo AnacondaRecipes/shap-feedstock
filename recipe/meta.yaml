@@ -81,6 +81,11 @@ requirements:
 # passes. The binary-classifier parametrization passes for the same code path. Shap's
 # own CI runs without a GPU so the bug was never caught upstream.
 {% set deselect_tests_cuda = " --deselect=tests/explainers/test_gpu_tree.py::test_gpu_tree_explainer_shap_interactions[tree_path_dependent-xgboost.sklearn.XGBClassifier1]" %}
+# win-64 CUDA only: XGBRFClassifier additivity check drifts beyond np.allclose's
+# default tolerance. The CPU TreeExplainer traverses on CPU but xgboost auto-uses
+# the worker's GPU for the RandomForest predict, so bagging accumulates FP drift.
+# Single-tree XGBClassifier passes on the same worker; linux-64 CUDA passes for both.
+{% set deselect_tests_cuda_win = " --deselect=tests/explainers/test_tree.py::TestExplainerXGBoost::test_xgboost_dmatrix_propagation[XGBRFClassifier]" %}
 
 {% set ignore_tests = "" %}
 # Skip 3.14 test for now due to massive failing scope because of
@@ -127,8 +132,9 @@ test:
     # OMP: Error #13: Assertion failure at kmp_dispatch.cpp(1298).
     # https://github.com/llvm/llvm-project/issues/54422
     - export OMP_NUM_THREADS=1  # [osx]
-    - pytest -sv tests {{ deselect_tests }} {{ ignore_tests }} --ignore=tests/benchmark                                # [gpu_variant != "cuda"]
-    - pytest -sv tests {{ deselect_tests }} {{ deselect_tests_cuda }} {{ ignore_tests }} --ignore=tests/benchmark      # [gpu_variant == "cuda"]
+    - pytest -sv tests {{ deselect_tests }} {{ ignore_tests }} --ignore=tests/benchmark                                                         # [gpu_variant != "cuda"]
+    - pytest -sv tests {{ deselect_tests }} {{ deselect_tests_cuda }} {{ ignore_tests }} --ignore=tests/benchmark                               # [gpu_variant == "cuda" and not win]
+    - pytest -sv tests {{ deselect_tests }} {{ deselect_tests_cuda }} {{ deselect_tests_cuda_win }} {{ ignore_tests }} --ignore=tests/benchmark  # [gpu_variant == "cuda" and win]
   requires:
     - pip
     - pytest
