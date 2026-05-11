@@ -72,6 +72,9 @@ requirements:
 {% set deselect_tests = deselect_tests + " --deselect=tests/explainers/test_coalition.py::test_tabular_coalition_partition_match" %}
 # Flaky on CI: urllib.error.HTTPError: HTTP Error 502: Bad Gateway or Proxy Error
 {% set deselect_tests = deselect_tests + " --deselect=tests/test_datasets.py::test_nhanesi" %}
+# Flaky on CI: a1a.svmlight is fetched from a github_data_url that returns HTTP 502 intermittently.
+{% set deselect_tests = deselect_tests + " --deselect=tests/explainers/test_kernel.py::test_kernel_shap_with_a1a_sparse_zero_background" %}
+{% set deselect_tests = deselect_tests + " --deselect=tests/explainers/test_kernel.py::test_kernel_shap_with_a1a_sparse_nonzero_background" %}
 # Pre-existing upstream bug in GPU TreeSHAP interaction values for multiclass XGBoost:
 # shap_interaction_values are not additive (sum != model margin) for the multiclass
 # classifier task, although the matching shap_values test (with check_additivity=True)
@@ -90,6 +93,11 @@ requirements:
 {% set ignore_tests = ignore_tests + " --ignore=tests/maskers/test_text.py" %}  # [py==314]
 {% set ignore_tests = ignore_tests + " --ignore=tests/models/test_teacher_forcing_logits.py" %}  # [py==314]
 {% set ignore_tests = ignore_tests + " --ignore=tests/models/test_text_generation.py" %}  # [py==314]
+# pkgs/main pytorch on linux-aarch64 is missing GPU kernels for the PBP cuda worker
+# (torch.AcceleratorError: cudaErrorNoKernelImageForDevice). test_deep.py's CUDA-device
+# parametrizations all fail; CPU-device ones pass. Skip the file on this combo until
+# pytorch ships aarch64-cuda binaries covering the worker's compute capability.
+{% set ignore_tests = ignore_tests + " --ignore=tests/explainers/test_deep.py" %}  # [aarch64 and gpu_variant == "cuda"]
 
 test:
   source_files:
