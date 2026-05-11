@@ -1,0 +1,20 @@
+# Local CBC: add gpu_variant zip alongside cuda_compiler_version so a single
+# meta.yaml produces a CPU build plus CUDA 12.9 and 13.0 builds on platforms
+# where CUDA is available (linux-64, linux-aarch64, win-64).
+gpu_variant:
+  - none
+  - cuda                         # [linux or (win and x86_64)]
+  - cuda                         # [linux or (win and x86_64)]
+
+cuda_compiler:                   # [linux or (win and x86_64)]
+  - cuda-nvcc                    # [linux or (win and x86_64)]
+
+cuda_compiler_version:           # [linux or (win and x86_64)]
+  - none                         # [linux or (win and x86_64)]
+  - 12.9                         # [linux or (win and x86_64)]
+  - 13.0                         # [linux or (win and x86_64)]
+
+zip_keys:
+  -                              # [linux or (win and x86_64)]
+    - gpu_variant                # [linux or (win and x86_64)]
+    - cuda_compiler_version      # [linux or (win and x86_64)]
