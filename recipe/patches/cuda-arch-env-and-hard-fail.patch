@@ -1,0 +1,58 @@
+From: Xianglong Kong <xkong@anaconda.com>
+Subject: Make NVCC arch list env-controlled, c++17 by default, fail-hard on CUDA build error
+
+Make CUDA arch list configurable via SHAP_CUDA_ARCHITECTURES, bump NVCC
+device-code C++ standard to c++17 (required by CUDA 13.0), and disable the
+silent CPU fallback when SHAP_REQUIRE_CUDA=1 so a CUDA build variant cannot
+accidentally produce a CPU-only artifact.
+
+Note: patch generated with AI assistance.
+
+--- a/setup.py
++++ b/setup.py
+@@ -75,18 +75,25 @@
+     _, nvcc = get_cuda_path()
+
+     print("NVCC ==> ", nvcc)
+-    arch_flags = (
+-        "-gencode=arch=compute_60,code=sm_60 "
+-        "-gencode=arch=compute_70,code=sm_70 "
+-        "-gencode=arch=compute_75,code=sm_75 "
+-        "-gencode=arch=compute_75,code=compute_75 "
+-        "-gencode=arch=compute_80,code=sm_80"
+-    )
++    arch_env = os.environ.get("SHAP_CUDA_ARCHITECTURES", "").strip()
++    if arch_env:
++        archs = [a.strip() for a in arch_env.split(";") if a.strip()]
++        flags = [f"-gencode=arch=compute_{a},code=sm_{a}" for a in archs]
++        flags.append(f"-gencode=arch=compute_{archs[-1]},code=compute_{archs[-1]}")
++        arch_flags = " ".join(flags)
++    else:
++        arch_flags = (
++            "-gencode=arch=compute_60,code=sm_60 "
++            "-gencode=arch=compute_70,code=sm_70 "
++            "-gencode=arch=compute_75,code=sm_75 "
++            "-gencode=arch=compute_75,code=compute_75 "
++            "-gencode=arch=compute_80,code=sm_80"
++        )
+     nvcc_command = (
+         f"-allow-unsupported-compiler shap/cext/_cext_gpu.cu -lib -o {lib_out} "
+         f"-Xcompiler {','.join(host_args)} "
+         f"--include-path {sysconfig.get_path('include')} "
+-        "--std c++14 "
++        "--std c++17 "
+         "--expt-extended-lambda "
+         f"--expt-relaxed-constexpr {arch_flags}"
+     )
+@@ -156,7 +163,10 @@
+     except Exception as e:
+         print("Exception occurred during setup,", str(e))
+
+-        if with_cuda:
++        if with_cuda and os.environ.get("SHAP_REQUIRE_CUDA") == "1":
++            print("ERROR: CUDA build required (SHAP_REQUIRE_CUDA=1) but failed.")
++            raise
++        elif with_cuda:
+             with_cuda = False
+             print("WARNING: Could not compile cuda extensions.")
+             print("Retrying SHAP build without cuda extension...")
